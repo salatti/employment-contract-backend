@@ -10,10 +10,13 @@ router.get('/', (req, res, next) => {
     const EmploymentContract = contract(employmentcontract_artifacts);
     EmploymentContract.setProvider(provider);
 
-    return EmploymentContract.deployed()
-        .then((instance) => res.render('truffle', {
-            title: 'EmploymentContract testing',
-            deployedAddress: deployedAddress
+    const titlePromise = Promise.resolve('EmploymentContract testing');
+    const instancePromise = EmploymentContract.deployed();
+
+    return Promise.all([titlePromise, instancePromise])
+        .then(([title, instance]) => res.render('truffle', {
+            title,
+            deployedAddress: instance.address,
         }));
 });
 
