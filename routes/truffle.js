@@ -10,19 +10,28 @@ router.get('/', function (req, res, next) {
     var provider = new Web3.providers.HttpProvider("http://localhost:8545");
     var EmploymentContract = contract(employmentcontract_artifacts);
     EmploymentContract.setProvider(provider);
-    
-    // arvo tulee alla promisen kautta, mutta se ei kerkee
-    // res.renderiin mukaan?
-    var deployedAddress; 
 
-    EmploymentContract.deployed().then(function (instance) {
-        console.log(instance.address) // lokittuu res.renderin jälkeen
+    var deployedAddress;
+
+    Promise.all([
+        EmploymentContract.deployed()
+    ]).then(function (result) {
+
+        var instance = result[0];
+        
+        console.log(instance.address);
         deployedAddress = instance.address;
-    });
 
-    res.render('truffle', {
-        title: 'EmploymentContract testing',
-        deployedAddress: deployedAddress
+        res.render('truffle', {
+            title: 'EmploymentContract testing',
+            deployedAddress: deployedAddress
+        });
+
+    }).catch(function (error) {
+      
+        res.render('error', {
+            message: error
+        });
     });
 
 });
