@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Web3 = require("web3");
+var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 var contract = require("truffle-contract");
 var employmentcontract_artifacts = require("../truffle/build/contracts/EmploymentContract.json")
 
@@ -11,28 +12,40 @@ router.get('/', function (req, res, next) {
     var EmploymentContract = contract(employmentcontract_artifacts);
     EmploymentContract.setProvider(provider);
 
+    var defaultAccount = web3.eth.coinbase;
+    
     var deployedAddress;
+    var employmentContract;
+    
+    EmploymentContract.deployed().then(function (instance) {
 
-    Promise.all([
-        EmploymentContract.deployed()
-    ]).then(function (result) {
-
-        var instance = result[0];
-        
-        console.log(instance.address);
+        employmentContract = instance;
         deployedAddress = instance.address;
 
-        res.render('truffle', {
-            title: 'EmploymentContract testing',
-            deployedAddress: deployedAddress
+        Promise.all([
+            employmentContract.owner.call(defaultAccount, {from: defaultAccount})
+        ]).then(function (result) {
+
+            var ownerOfEmploymentContract= result[0];
+
+            res.render('truffle', {
+                title: 'EmploymentContract testing',
+                deployedAddress: deployedAddress,
+                defaultAccount: defaultAccount,
+                ownerOfEmploymentContract: ownerOfEmploymentContract
+            });
         });
 
     }).catch(function (error) {
-      
+
         res.render('error', {
             message: error
         });
     });
+
+
+
+
 
 });
 
