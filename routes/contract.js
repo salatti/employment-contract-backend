@@ -7,6 +7,12 @@ var employmentcontract_artifacts = require("../truffle/build/contracts/Employmen
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
+    res.render('contract', { title: 'New Contract' });
+});
+
+router.post('/', function (req, res) {
+    console.log(req.body.employeeName)
+    
 
     var provider = new Web3.providers.HttpProvider("http://localhost:8545");
     var EmploymentContract = contract(employmentcontract_artifacts);
@@ -21,24 +27,14 @@ router.get('/', function (req, res, next) {
 
         employmentContract = instance;
         deployedAddress = instance.address;
-
+        var nameToSend = web3.fromAscii(req.body.employeeName);
+        console.log(nameToSend)
         Promise.all([
-            employmentContract.owner.call(defaultAccount, { from: defaultAccount }),
-            employmentContract.employeeName.call(defaultAccount, { from: defaultAccount })
+            employmentContract.setData(web3.fromAscii(req.body.employeeName, 32), { from: defaultAccount })
 
-        ]).then(function ([owner, name2]) {
-
-            console.log(name2)
-            var ownerOfEmploymentContract = owner;
-            var name = web3.toAscii(name2);
-
-            res.render('truffle', {
-                title: 'EmploymentContract testing',
-                deployedAddress: deployedAddress,
-                defaultAccount: defaultAccount,
-                ownerOfEmploymentContract: ownerOfEmploymentContract,
-                employeeName: name
-            });
+        ]).then(function ([result]) {
+            console.log(result)
+            res.send(req.body)
         });
 
     }).catch(function (error) {
@@ -48,10 +44,8 @@ router.get('/', function (req, res, next) {
         });
     });
 
+})
 
 
-
-
-});
 
 module.exports = router;
