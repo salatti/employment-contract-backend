@@ -18,13 +18,13 @@ router.get('/', function (req, res, next) {
     var deployedAddress;
     var employmentContract;
 
-    EmploymentContract.deployed().then(function (instance) {
+    EmploymentContract.at("0x5ff63cdd6dcee0ffa8b28622b8cfab7162c6211c").then(function (instance) {
 
         employmentContract = instance;
         deployedAddress = instance.address;
 
         Promise.all([
-            employmentContract.employerAddr.call(defaultAccount, { from: defaultAccount }),
+            employmentContract.employeeAddr.call(defaultAccount, { from: defaultAccount }),
             employmentContract.employeeName.call(defaultAccount, { from: defaultAccount }),
             employmentContract.creationTime.call(defaultAccount, { from: defaultAccount }),
             employmentContract.acceptTime.call(defaultAccount, { from: defaultAccount })
