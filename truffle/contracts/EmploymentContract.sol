@@ -9,23 +9,24 @@ contract EmploymentContract {
     uint public lastAcceptanceTime;
     uint public acceptTime;
 
-    function EmploymentContract(address addrOfEmployee, uint lastAccTime) {
+    function EmploymentContract(
+        address addrOfEmployee,
+        bytes32 employee,
+        uint lastAccTime
+     ) {
         employerAddr = msg.sender;
         employeeAddr = addrOfEmployee;
         creationTime = block.timestamp;
         lastAcceptanceTime = lastAccTime;
+        employeeName = employee;
     }
 
     modifier onlyEmployee() {
         if(msg.sender != employeeAddr) throw;
         _;
     }
-
-    function setData(bytes32 employee) {
-        employeeName = employee;
-    }
-
-    function acceptContract() returns(bool) {
+    
+    function acceptContract() onlyEmployee returns(bool) {
         if(block.timestamp <= lastAcceptanceTime) {
             acceptTime = block.timestamp;
             return true;
