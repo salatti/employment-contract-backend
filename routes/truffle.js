@@ -5,6 +5,7 @@ var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 var contract = require("truffle-contract");
 var employmentcontract_artifacts = require("../truffle/build/contracts/EmploymentContract.json")
 var moment = require("moment");
+var Contract = require("../models/contract");
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -18,44 +19,49 @@ router.get('/', function (req, res, next) {
     var deployedAddress;
     var employmentContract;
 
-    EmploymentContract.at("0x5ff63cdd6dcee0ffa8b28622b8cfab7162c6211c").then(function (instance) {
+    var first = Contract.findOne({}, {}, { sort: { 'created_at' : -1 } },function (err, result) {
+        if (err) console.log(err);
+        console.log(result); // Space Ghost is a talk show host.
 
-        employmentContract = instance;
-        deployedAddress = instance.address;
 
-        Promise.all([
-            employmentContract.employeeAddr.call(defaultAccount, { from: defaultAccount }),
-            employmentContract.employeeName.call(defaultAccount, { from: defaultAccount }),
-            employmentContract.creationTime.call(defaultAccount, { from: defaultAccount }),
-            employmentContract.acceptTime.call(defaultAccount, { from: defaultAccount })
+        EmploymentContract.at(result.address).then(function (instance) {
 
-        ]).then(function ([owner, name2, creationTime, acceptTime]) {
+            employmentContract = instance;
+            deployedAddress = instance.address;
 
-            console.log(acceptTime.toNumber())
-            var ownerOfEmploymentContract = owner;
-            var name = web3.toAscii(name2);
+            Promise.all([
+                employmentContract.employeeAddr.call(defaultAccount, { from: defaultAccount }),
+                employmentContract.employeeName.call(defaultAccount, { from: defaultAccount }),
+                employmentContract.creationTime.call(defaultAccount, { from: defaultAccount }),
+                employmentContract.acceptTime.call(defaultAccount, { from: defaultAccount })
 
-            var currentBlocktime = moment.unix(creationTime).format("DD/MM/YYYY HH:mm:ss");
-            var acceptTime = moment.unix(acceptTime).format("DD/MM/YYYY HH:mm:ss");
+            ]).then(function ([owner, name2, creationTime, acceptTime]) {
 
-            res.render('truffle', {
-                title: 'EmploymentContract testing',
-                deployedAddress: deployedAddress,
-                defaultAccount: defaultAccount,
-                ownerOfEmploymentContract: ownerOfEmploymentContract,
-                employeeName: name,
-                time: currentBlocktime,
-                acceptTime: acceptTime
+                console.log(acceptTime.toNumber())
+                var ownerOfEmploymentContract = owner;
+                var name = web3.toAscii(name2);
+
+                var currentBlocktime = moment.unix(creationTime).format("DD/MM/YYYY HH:mm:ss");
+                var acceptTime = moment.unix(acceptTime).format("DD/MM/YYYY HH:mm:ss");
+
+                res.render('truffle', {
+                    title: 'EmploymentContract testing',
+                    deployedAddress: deployedAddress,
+                    defaultAccount: defaultAccount,
+                    ownerOfEmploymentContract: ownerOfEmploymentContract,
+                    employeeName: name,
+                    time: currentBlocktime,
+                    acceptTime: acceptTime
+                });
+            });
+
+        }).catch(function (error) {
+
+            res.render('error', {
+                message: error
             });
         });
-
-    }).catch(function (error) {
-
-        res.render('error', {
-            message: error
-        });
     });
-
 
 
 
