@@ -31,3 +31,6 @@ npm-debug.log
 
 # Truffle builds
 truffle/build
+
+
+.DS_Store
