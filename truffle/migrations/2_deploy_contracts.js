@@ -8,5 +8,5 @@ module.exports = function(deployer) {
   deployer.link(ConvertLib, MetaCoin);
   deployer.deploy(MetaCoin);
   deployer.deploy(ContractCreator);
-  deployer.deploy(EmploymentContract);
+  //deployer.deploy(EmploymentContract);
 };

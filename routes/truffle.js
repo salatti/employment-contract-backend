@@ -1,71 +1,113 @@
-var express = require('express');
-var router = express.Router();
-var Web3 = require("web3");
-var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-var contract = require("truffle-contract");
-var employmentcontract_artifacts = require("../truffle/build/contracts/EmploymentContract.json")
-var moment = require("moment");
-var Contract = require("../models/contract");
+const express = require('express');
+const Web3 = require('web3');
+const contract = require('truffle-contract');
+const moment = require('moment');
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
+const router = express.Router();
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+const employmentContractArtifacts = require('../truffle/build/contracts/EmploymentContract.json');
+const contractCreatorArtifacts = require('../truffle/build/contracts/ContractCreator.json');
 
-    var provider = new Web3.providers.HttpProvider("http://localhost:8545");
-    var EmploymentContract = contract(employmentcontract_artifacts);
-    EmploymentContract.setProvider(provider);
+router.get('/', (req, res) => {
+  const provider = new Web3.providers.HttpProvider('http://localhost:8545');
+  const EmploymentContract = contract(employmentContractArtifacts);
+  EmploymentContract.setProvider(provider);
 
-    var defaultAccount = web3.eth.coinbase;
+  const ContractCreator = contract(contractCreatorArtifacts);
 
-    var deployedAddress;
-    var employmentContract;
+  ContractCreator.setProvider(provider);
 
-    var first = Contract.findOne({}, {}, { sort: { 'created_at' : -1 } },function (err, result) {
-        if (err) console.log(err);
-        console.log(result); // Space Ghost is a talk show host.
+  const defaultAccount = web3.eth.coinbase;
 
+  EmploymentContract.defaults({ from: defaultAccount });
 
-        EmploymentContract.at(result.address).then(function (instance) {
+  let deployedAddress;
+  let employmentContractInstance;
+  let contractCreatorInstance;
 
-            employmentContract = instance;
+  ContractCreator.deployed().then((instance) => {
+    contractCreatorInstance = instance;
+
+    contractCreatorInstance.last.call()
+      .then((address) => {
+        EmploymentContract.at(address)
+          .then((instance) => {
+            employmentContractInstance = instance;
             deployedAddress = instance.address;
 
             Promise.all([
-                employmentContract.employeeAddr.call(defaultAccount, { from: defaultAccount }),
-                employmentContract.employeeName.call(defaultAccount, { from: defaultAccount }),
-                employmentContract.creationTime.call(defaultAccount, { from: defaultAccount }),
-                employmentContract.acceptTime.call(defaultAccount, { from: defaultAccount })
+              employmentContractInstance.employeeAddr.call(),
+              employmentContractInstance.employeeName.call(),
+              employmentContractInstance.creationTime.call(),
+              employmentContractInstance.acceptTime.call()
+            ]).then(([owner, name2, creationTime, acceptTime]) => {
+              console.log(acceptTime.toNumber());
 
-            ]).then(function ([owner, name2, creationTime, acceptTime]) {
+              const ownerOfEmploymentContract = owner;
+              const name = web3.toAscii(name2);
 
-                console.log(acceptTime.toNumber())
-                var ownerOfEmploymentContract = owner;
-                var name = web3.toAscii(name2);
+              const currentBlocktime = moment.unix(creationTime).format('DD/MM/YYYY HH:mm:ss');
+              const acceptTimeFormatted = moment.unix(acceptTime).format('DD/MM/YYYY HH:mm:ss');
 
-                var currentBlocktime = moment.unix(creationTime).format("DD/MM/YYYY HH:mm:ss");
-                var acceptTime = moment.unix(acceptTime).format("DD/MM/YYYY HH:mm:ss");
-
-                res.render('truffle', {
-                    title: 'EmploymentContract testing',
-                    deployedAddress: deployedAddress,
-                    defaultAccount: defaultAccount,
-                    ownerOfEmploymentContract: ownerOfEmploymentContract,
-                    employeeName: name,
-                    time: currentBlocktime,
-                    acceptTime: acceptTime
-                });
+              res.render('truffle', {
+                title: 'EmploymentContract testing',
+                deployedAddress,
+                defaultAccount,
+                ownerOfEmploymentContract,
+                employeeName: name,
+                time: currentBlocktime,
+                acceptTime: acceptTimeFormatted
+              });
             });
+          })
+          .catch((error) => {
+            res.render('error', { message: error });
+          });
+      });
+  });
+});
 
-        }).catch(function (error) {
+router.get('/test', (req, res, next) => {
+  let provider = new Web3.providers.HttpProvider('http://localhost:8545');
 
-            res.render('error', {
-                message: error
-            });
-        });
+  let ContractCreator = contract(contractCreatorArtifacts);
+  ContractCreator.setProvider(provider);
+
+  let defaultAccount = web3.eth.coinbase;
+
+  let deployedAddress;
+  let contractCreator;
+
+  ContractCreator.deployed().then((instance) => {
+    contractCreator = instance;
+    deployedAddress = instance.address;
+
+    Promise.all([
+      employmentContract.employeeAddr.call(defaultAccount, { from: defaultAccount }),
+
+    ]).then(([owner, name2, creationTime, acceptTime]) => {
+      console.log(acceptTime.toNumber());
+      let ownerOfEmploymentContract = owner;
+      let name = web3.toAscii(name2);
+
+      let currentBlocktime = moment.unix(creationTime).format('DD/MM/YYYY HH:mm:ss');
+      var acceptTime = moment.unix(acceptTime).format('DD/MM/YYYY HH:mm:ss');
+
+      res.render('truffle', {
+        title: 'EmploymentContract testing',
+        deployedAddress,
+        defaultAccount,
+        ownerOfEmploymentContract,
+        employeeName: name,
+        time: currentBlocktime,
+        acceptTime
+      });
     });
-
-
-
-
+  }).catch((error) => {
+    res.render('error', {
+      message: error
+    });
+  });
 });
 
 module.exports = router;

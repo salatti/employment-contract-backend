@@ -1,72 +1,98 @@
-var express = require('express');
-var router = express.Router();
-var Web3 = require("web3");
-var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-var contract = require("truffle-contract");
-var employmentcontract_artifacts = require("../truffle/build/contracts/EmploymentContract.json")
-var moment = require("moment");
-var Contract = require("../models/contract");
+const express = require('express');
+const Web3 = require('web3');
+const contract = require('truffle-contract');
+const moment = require('moment');
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index', { title: 'Placeholder for vue.js view' });
+const router = express.Router();
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+const employmentContractArtifacts = require('../truffle/build/contracts/EmploymentContract.json');
+const contractCreatorArtifacts = require('../truffle/build/contracts/ContractCreator.json');
+
+router.get('/', (req, res) => {
+  res.render('index', { title: 'Placeholder for vue.js view' });
 });
 
-router.post('/new', function (req, res) {
+router.get('/:id', (req, res) => {
+  console.log('Request Id:', req.params.id);
 
-    var provider = new Web3.providers.HttpProvider("http://localhost:8545");
-    var EmploymentContract = contract(employmentcontract_artifacts);
-    EmploymentContract.setProvider(provider);
+  const provider = new Web3.providers.HttpProvider('http://localhost:8545');
+  const ContractCreator = contract(contractCreatorArtifacts);
 
-    var defaultAccount = web3.eth.coinbase;
+  ContractCreator.setProvider(provider);
 
-    var deployedAddress;
-    var employmentContract;
+  const defaultAccount = web3.eth.coinbase;
 
-    EmploymentContract.defaults({ from: defaultAccount,  gas: 4712388 });
+  let deployedAddress;
+  let contractCreatorInstance;
 
-    // req params for new contract
+  ContractCreator.defaults({ from: defaultAccount, gas: 4712388 });
 
-    var employeeName = web3.fromAscii(req.body.employeeName);
-    var employeeAddr = req.body.employeeAddr;
-    var lastAccTime = moment(req.body.lastAccTime).unix();
+  const employeeAddr = req.params.id;
 
-    console.log(employeeName)
-    console.log(employeeAddr)
-    console.log(lastAccTime)
+  console.log('Finding');
 
-    //res.send("asd");
+  ContractCreator.deployed().then((instance) => {
+    console.log('ContractCreator found');
 
-    console.log("Creating new");
-    EmploymentContract.new(
-        employeeAddr,
-        employeeName,
-        web3.toBigNumber(lastAccTime)
-    ).then(function (instance) {
-        console.log("Created");
+    contractCreatorInstance = instance;
+    deployedAddress = instance.address;
+    console.log(`addr of contract creator: ${deployedAddress}`);
 
-        var contract = new Contract();
-        contract.address = instance.address;
-        contract.created_at = new Date();
-        contract.save(function (err) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log('saved');
-            }
-        });
-
-        employmentContract = instance;
-        res.send(instance.address);
-
-    }).catch(function (err) {
-        console.log(err);
-
-        // There was an error! Handle it.
+    Promise.all([
+      contractCreatorInstance.findByEmployeeAddr.call(employeeAddr)
+    ])
+      .then(([result]) => {
+        console.log(result);
+        return res.send(result);
+      }).catch((error) => {
+        console.log('Unexpected error.');
+        return res.send(error);
+      });
+  })
+    .catch((error) => {
+      console.log(error);
+      return res.send(error);
     });
+});
 
-})
+router.post('/new', (req, res) => {
+  const provider = new Web3.providers.HttpProvider('http://localhost:8545');
+  const ContractCreator = contract(contractCreatorArtifacts);
+  ContractCreator.setProvider(provider);
 
+  const defaultAccount = web3.eth.coinbase;
 
+  let contractCreatorInstance;
+
+  ContractCreator.defaults({ from: defaultAccount, gas: 4712388 });
+
+  // req params for new contract
+
+  const employeeName = web3.fromAscii(req.body.employeeName);
+  const employeeAddr = req.body.employeeAddr;
+  const lastAccTime = moment(req.body.lastAccTime).unix();
+
+  console.log('Creating new');
+
+  ContractCreator.deployed()
+    .then((instance) => {
+      console.log('ContractCreator found');
+
+      contractCreatorInstance = instance;
+      const deployedAddress = instance.address;
+      console.log(`addr of contract creator: ${deployedAddress}`);
+
+      Promise.all([
+        contractCreatorInstance
+          .createEmplyoymentContract(employeeAddr, employeeName, web3.toBigNumber(lastAccTime))
+      ])
+        .then(([result]) => {
+          console.log(result);
+          res.send(result);
+        });
+    }).catch((err) => {
+      console.log(err);
+    });
+});
 
 module.exports = router;
