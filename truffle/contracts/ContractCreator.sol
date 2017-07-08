@@ -24,13 +24,18 @@ contract ContractCreator {
         _;
     }
 
+    event NewContract(
+        address indexed addrOfEmployee,
+        address indexed addrOfContract
+    );
+
     function createEmplyoymentContract(
         address addrOfEmployee,
         bytes32 employee,
         uint lastAccTime
     )
         onlyOwner
-        returns(address)
+        returns(bool)
     {
         EmploymentContract newCont =
             new EmploymentContract(addrOfEmployee, employee, lastAccTime);
@@ -40,7 +45,9 @@ contract ContractCreator {
         employmentContracts[id] =
             DeployedEmplyomentContract(newCont, addrOfEmployee);
         
-        return newCont;
+        NewContract(addrOfEmployee, newCont);
+
+        return true;
     }
 
 

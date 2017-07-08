@@ -87,8 +87,27 @@ router.post('/new', (req, res) => {
           .createEmplyoymentContract(employeeAddr, employeeName, web3.toBigNumber(lastAccTime))
       ])
         .then(([result]) => {
-          console.log(result);
-          res.send(result);
+          // console.log(result);
+          // result is an object with the following values:
+          //
+          // result.tx      => transaction hash, string
+          // result.logs    => array of decoded events that were triggered within this transaction
+          // result.receipt => transaction receipt object, which includes gas used
+
+          let addrOfNewContract;
+
+          for (let i = 0; i < result.logs.length; i += 1) {
+            const log = result.logs[i];
+
+            if (log.event === 'NewContract') {
+              console.log('Event log:');
+              console.log(log);
+              addrOfNewContract = log.args.addrOfContract;
+              // console.log(log.event);
+              break;
+            }
+          }
+          res.json({ address: addrOfNewContract });
         });
     }).catch((err) => {
       console.log(err);
