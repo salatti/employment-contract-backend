@@ -24,9 +24,9 @@ router.get('/', (req, res) => {
       console.log(`addr of contract creator: ${contractCreatorInstance.address}`);
 
       const NewContractEvent = contractCreatorInstance.NewContract({}, { fromBlock: 0, toBlock: 'latest' });
-      console.log(NewContractEvent);
+      // console.log(NewContractEvent);
       NewContractEvent.get((error, logs) => {
-        console.log(logs.length);
+        // console.log(logs.length);
 
         const allEventContracts = [];
 
