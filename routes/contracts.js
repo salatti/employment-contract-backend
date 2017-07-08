@@ -8,24 +8,48 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const employmentContractArtifacts = require('../truffle/build/contracts/EmploymentContract.json');
 const contractCreatorArtifacts = require('../truffle/build/contracts/ContractCreator.json');
 
+const provider = new Web3.providers.HttpProvider('http://localhost:8545');
+const ContractCreator = contract(contractCreatorArtifacts);
+const defaultAccount = web3.eth.coinbase;
+ContractCreator.setProvider(provider);
+ContractCreator.defaults({ from: defaultAccount, gas: 4712388 });
+
+
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Placeholder for vue.js view' });
+  let contractCreatorInstance;
+
+  ContractCreator.deployed()
+    .then((instance) => {
+      contractCreatorInstance = instance;
+      console.log(`addr of contract creator: ${contractCreatorInstance.address}`);
+
+      const NewContractEvent = contractCreatorInstance.NewContract({}, { fromBlock: 0, toBlock: 'latest' });
+      console.log(NewContractEvent);
+      NewContractEvent.get((error, logs) => {
+        console.log(logs.length);
+
+        const allEventContracts = [];
+
+        for (let i = 0; i < logs.length; i += 1) {
+          const log = logs[i];
+          allEventContracts.push({
+            employee: log.args.addrOfEmployee,
+            contract: log.args.addrOfContract
+          });
+        }
+
+        res.json(allEventContracts);
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
 });
 
 router.get('/:id', (req, res) => {
   console.log('Request Id:', req.params.id);
 
-  const provider = new Web3.providers.HttpProvider('http://localhost:8545');
-  const ContractCreator = contract(contractCreatorArtifacts);
-
-  ContractCreator.setProvider(provider);
-
-  const defaultAccount = web3.eth.coinbase;
-
   let deployedAddress;
   let contractCreatorInstance;
-
-  ContractCreator.defaults({ from: defaultAccount, gas: 4712388 });
 
   const employeeAddr = req.params.id;
 
@@ -55,16 +79,8 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/new', (req, res) => {
-  const provider = new Web3.providers.HttpProvider('http://localhost:8545');
-  const ContractCreator = contract(contractCreatorArtifacts);
-  ContractCreator.setProvider(provider);
-
-  const defaultAccount = web3.eth.coinbase;
-
+router.post('/', (req, res) => {
   let contractCreatorInstance;
-
-  ContractCreator.defaults({ from: defaultAccount, gas: 4712388 });
 
   // req params for new contract
 
