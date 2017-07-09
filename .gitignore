@@ -29,8 +29,5 @@ node_modules
 # Debug log from npm
 npm-debug.log
 
-# Truffle builds
-truffle/build
-
 
 .DS_Store

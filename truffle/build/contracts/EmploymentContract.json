@@ -1,0 +1,131 @@
+{
+  "contract_name": "EmploymentContract",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "isContractAccepted",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "acceptContract",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "employerAddr",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "employeeName",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "creationTime",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "acceptTime",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "employeeAddr",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "lastAcceptanceTime",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "addrOfEmployee",
+          "type": "address"
+        },
+        {
+          "name": "employee",
+          "type": "bytes32"
+        },
+        {
+          "name": "lastAccTime",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b6040516060806102d38339810160409081528151602083015191909201515b60008054600160a060020a03338116600160a060020a031992831617909255600180549286169290911691909117905542600355600481905560028290555b5050505b6102568061007d6000396000f300606060405236156100725763ffffffff60e060020a600035041663301c489e8114610074578063619d267114610098578063a513c06e146100bc578063bb3d48c0146100e8578063d8270dce1461010a578063dbfe04d91461012c578063ee6752c91461014e578063f7a586d61461017a575bfe5b341561007c57fe5b61008461019c565b604080519115158252519081900360200190f35b34156100a057fe5b6100846101b8565b604080519115158252519081900360200190f35b34156100c457fe5b6100cc6101f4565b60408051600160a060020a039092168252519081900360200190f35b34156100f057fe5b6100f8610203565b60408051918252519081900360200190f35b341561011257fe5b6100f8610209565b60408051918252519081900360200190f35b341561013457fe5b6100f861020f565b60408051918252519081900360200190f35b341561015657fe5b6100cc610215565b60408051600160a060020a039092168252519081900360200190f35b341561018257fe5b6100f8610224565b60408051918252519081900360200190f35b6000600060055411156101b1575060016101b5565b5060005b90565b60015460009033600160a060020a039081169116146101d75760006000fd5b60045442116101b157504260055560016101b5565b5060005b5b90565b600054600160a060020a031681565b60025481565b60035481565b60055481565b600154600160a060020a031681565b600454815600a165627a7a7230582002c2e94e2acbf52e8a712e82726f23f86cf9f8cec32f7b2cac4281cf39c5090d0029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1499596103464
+}

@@ -14,7 +14,6 @@ router.get('/', (req, res) => {
   EmploymentContract.setProvider(provider);
 
   const ContractCreator = contract(contractCreatorArtifacts);
-
   ContractCreator.setProvider(provider);
 
   const defaultAccount = web3.eth.coinbase;
