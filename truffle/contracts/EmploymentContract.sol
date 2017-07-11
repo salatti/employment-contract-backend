@@ -6,18 +6,18 @@ contract EmploymentContract {
     address public employeeAddr;
     bytes32 public employeeName;
     uint public creationTime;
-    uint public lastAcceptanceTime;
+    uint public acceptanceDeadline;
     uint public acceptTime;
 
     function EmploymentContract(
         address addrOfEmployee,
         bytes32 employee,
-        uint lastAccTime
+        uint deadline
      ) {
         employerAddr = msg.sender;
         employeeAddr = addrOfEmployee;
         creationTime = block.timestamp;
-        lastAcceptanceTime = lastAccTime;
+        acceptanceDeadline = deadline;
         employeeName = employee;
     }
 
@@ -27,7 +27,7 @@ contract EmploymentContract {
     }
     
     function acceptContract() onlyEmployee returns(bool) {
-        if(block.timestamp <= lastAcceptanceTime) {
+        if(block.timestamp <= acceptanceDeadline) {
             acceptTime = block.timestamp;
             return true;
         }
