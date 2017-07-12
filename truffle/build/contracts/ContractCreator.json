@@ -141,8 +141,56 @@
       "links": {},
       "address": "0xcfeb869f69431e42cdb54a4f4f105c19c080a601",
       "updated_at": 1499787150382
+    },
+    "1499790546716": {
+      "events": {
+        "0x17182ea1a6748f7923ea0bfb4bf8bc76cc894e662541ad1ea15797322d541db8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "addrOfEmployee",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "addrOfContract",
+              "type": "address"
+            }
+          ],
+          "name": "NewContract",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xcfeb869f69431e42cdb54a4f4f105c19c080a601",
+      "updated_at": 1499790553998
+    },
+    "1499836890332": {
+      "events": {
+        "0x17182ea1a6748f7923ea0bfb4bf8bc76cc894e662541ad1ea15797322d541db8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "addrOfEmployee",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "addrOfContract",
+              "type": "address"
+            }
+          ],
+          "name": "NewContract",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xcfeb869f69431e42cdb54a4f4f105c19c080a601",
+      "updated_at": 1499836902984
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1499787150382
+  "updated_at": 1499836902984
 }
