@@ -49,21 +49,6 @@ contract ContractCreator {
 
         return true;
     }
-
-
-    // Everyone can call this creating a dos attack
-    function findByEmployeeAddr(address addrOfEmployee) returns (address) {
-        
-        if(numContracts == 0) return;
-
-        for (var index = numContracts - 1; index >= 0; index--) {
-            if(employmentContracts[index].employeeAddr == addrOfEmployee) 
-                return employmentContracts[index].contractAddr;
-
-            if(index == 0) return;
-        }
-
-    }
-
+    
 }
 

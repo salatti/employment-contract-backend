@@ -45,40 +45,6 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
-  console.log('Request Id:', req.params.id);
-
-  let deployedAddress;
-  let contractCreatorInstance;
-
-  const employeeAddr = req.params.id;
-
-  console.log('Finding');
-
-  ContractCreator.deployed().then((instance) => {
-    console.log('ContractCreator found');
-
-    contractCreatorInstance = instance;
-    deployedAddress = instance.address;
-    console.log(`addr of contract creator: ${deployedAddress}`);
-
-    Promise.all([
-      contractCreatorInstance.findByEmployeeAddr.call(employeeAddr)
-    ])
-      .then(([result]) => {
-        console.log(result);
-        return res.send(result);
-      }).catch((error) => {
-        console.log('Unexpected error.');
-        return res.send(error);
-      });
-  })
-    .catch((error) => {
-      console.log(error);
-      return res.send(error);
-    });
-});
-
 router.post('/', (req, res) => {
   let contractCreatorInstance;
 
