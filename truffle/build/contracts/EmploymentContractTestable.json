@@ -2,7 +2,7 @@
   "contract_name": "EmploymentContractTestable",
   "abi": [
     {
-      "constant": false,
+      "constant": true,
       "inputs": [],
       "name": "isContractAccepted",
       "outputs": [
@@ -18,12 +18,7 @@
       "constant": false,
       "inputs": [],
       "name": "acceptContract",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "type": "function"
     },
@@ -109,5 +104,5 @@
   "unlinked_binary": "0x",
   "networks": {},
   "schema_version": "0.0.5",
-  "updated_at": 1503300626166
+  "updated_at": 1503311736781
 }

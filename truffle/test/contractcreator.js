@@ -10,13 +10,13 @@ const lastAccTime = moment(new Date()).unix();
 
 contract('ContractCreator', (accounts) => {
   it('should set owner correctly', () => ContractCreator.deployed()
-    .then(instance => instance.owner.call(accounts[0]))
+    .then(instance => instance.owner.call())
     .then((result) => {
       assert.equal(result, accounts[0], 'contract owner was not the first account');
     }));
 
   it('should have 0 created contracts', () => ContractCreator.deployed()
-    .then(instance => instance.getNumContracts.call(accounts[1]))
+    .then(instance => instance.getNumContracts.call())
     .then((result) => {
       assert.equal(result, 0, 'there was created contracts');
     }));

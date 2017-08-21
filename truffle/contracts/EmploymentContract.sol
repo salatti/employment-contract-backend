@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 contract EmploymentContract {
 
@@ -22,19 +22,17 @@ contract EmploymentContract {
     }
 
     modifier onlyEmployee() {
-        if(msg.sender != employeeAddr) throw;
+        require(msg.sender == employeeAddr);
         _;
     }
     
-    function acceptContract() onlyEmployee returns(bool) {
+    function acceptContract() onlyEmployee {
         if(block.timestamp <= acceptanceDeadline) {
             acceptTime = block.timestamp;
-            return true;
         }
-        return false;
     }
 
-    function isContractAccepted() returns(bool) {
+    function isContractAccepted() constant returns(bool) {
         if(acceptTime > 0) {
             return true;
         }

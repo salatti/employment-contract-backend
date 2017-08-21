@@ -1,18 +1,11 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 import "./EmploymentContract.sol";
 
 contract ContractCreator {
 
     address public owner;
-
-    struct DeployedEmplyomentContract {
-        address contractAddr;
-        address employeeAddr;
-    }
-
-    mapping (uint => DeployedEmplyomentContract) public employmentContracts;
-    address public last;
+    address public latest;
     uint numContracts; 
 
     function ContractCreator() {
@@ -20,7 +13,7 @@ contract ContractCreator {
     }
 
     modifier onlyOwner() {
-        if(msg.sender != owner) throw;
+        require(msg.sender == owner);
         _;
     }
 
@@ -35,19 +28,14 @@ contract ContractCreator {
         uint lastAccTime
     )
         onlyOwner
-        returns(bool)
     {
         EmploymentContract newCont =
             new EmploymentContract(addrOfEmployee, employee, lastAccTime);
 
-        last = newCont;
-        uint id = numContracts++;
-        employmentContracts[id] =
-            DeployedEmplyomentContract(newCont, addrOfEmployee);
-        
+        latest = newCont;
+        numContracts++;
         NewContract(addrOfEmployee, newCont);
 
-        return true;
     }
     
 }
