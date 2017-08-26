@@ -1,6 +1,5 @@
 # employment-contract-backend
-dippatyösovelluksen backend
 
-Käytössä olevat kirjastot:
+Used frameworks:
 - Express.js
 - Truffle
